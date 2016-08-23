@@ -531,6 +531,80 @@ baseline-shift | 与dy属性设置上下标相比，这个属性更方便，当�
 startOffset属性用来指定文本的起点，当设置为50%，并且设置text-anchor为middle时，文本会被定为在path的中间。
 
 
+## 第十章 裁剪和蒙版
+
+### 1. 裁剪路径
+在创建SVG文档时，可以通过指定感兴趣的区域的宽度和高度建立视口，这个视口就会变成默认的裁剪区域，裁剪区域外的任何部分都不会被显示。裁剪区域可以通过clipPath元素建立自己的裁剪区域。
+
+最简单的是建立一个矩形裁剪区域。
+
+
+```
+<defs>
+	<clipPath id="rectClip">
+		<rect x="100" y="100" width="100" height="90" fill="none" stroke="black"></rect>
+		<circle cx="300" cy="150" r="60" fill="none"></circle>
+		<path d="M100 50L150,50L100,20L40,60Z" fill="none"></path>
+	</clipPath>
+</defs>
+<image x="0" y="0" width="480" height="270" xlink:href="./10.0.jpg" style="clip-path:url(#rectClip);"></image>
+<image x="0" y="0" width="480" height="270" xlink:href="./10.0.jpg" opacity="0.2"></image>
+```
+
+![image](http://note.youdao.com/favicon.ico)  10.1
+
+在上图中裁剪区域由一个矩形、path路径和一个圆形组成，为了方便对比观察，又添加了一个透明度为0.2的背景图。
+
+裁剪路径也可以指定坐标系，在上面的示例中使用的是用户坐标系，也就是裁剪路径中的坐标值都是基于原点的。也可以根据对象的边界来指定，需要设置clipPathUnits属性为objectBoundingBox(默认值为userSpaceOnUse)。
+
+将上述示例clipPathUnits属性设置为objectBoundingBox：
+
+
+```
+<defs>
+	<clipPath id="rectClip" clipPathUnits="objectBoundingBox">
+		<rect x=".30" y=".300" width=".200" height=".40" fill="none" stroke="black"></rect>
+		<circle cx=".300" cy=".150" r=".090" fill="none"></circle>
+    </clipPath>
+</defs>
+		
+<image x="0" y="0" width="480" height="270" xlink:href="./10.0.jpg" style="clip-path:url(#rectClip);"></image>
+<image x="0" y="0" width="480" height="270" xlink:href="./10.0.jpg" opacity="0.2"></image>
+```
+![image](http://note.youdao.com/favicon.ico)  10.2
+
+可以注意到clipPath元素中的坐标都根据被裁剪对象的尺寸百分比设置。
+
+### 2. 蒙版
+
+SVG的蒙版会变换对象的透明度，如果蒙版是不透明的，则被蒙版覆盖的对象的像素就是不透明的，如果蒙版是半透明的，则对象就是半透明的。
+
+使用mask元素创建蒙版，使用x,y,width,height指定蒙版的尺寸，这些尺寸默认按照objectBoungdingBox计算，如果想根据用户空间坐标计算，则需要设置mask元素的maskUnits值为userSpaceOnUse。
+
+mask之间是想要用作蒙版的任意基本形状、文本图像或路径。这些元素默认坐标使用用户坐标空间表达，如果想要这些元素使用对象的边界框，则设置maskContenUnits属性为objectBoungdingBox即可。
+
+注意与maskUnits属性的区别，maskUnits针对mask元素，maskContenUnits属性针对mask元素内的元素。
+
+```
+<defs>
+	<mask id="mask" x="0" y="0" width="1" height="1" maskContentUnits="objectBoundingBox">
+		<circle cx=".500" cy=".50" r=".30" fill="red"></circle>
+	</mask>
+</defs>
+<rect x="0" y="0" width="100" height="100" style="mask:url(#mask)"></rect>
+<rect x="0" y="0" width="100" height="100" fill="none" stroke="black"></rect>
+```
+
+![image](http://note.youdao.com/favicon.ico) 10.3
+
+在上图中，mask元素中添加了一个圆，用作蒙版形状，添加了两个rect，一个应用了蒙版，一个添加了边框便于观察。
+
+SVG需要确定蒙版的透明度，每个像素由4个值描述：R,G,B,透明度，使用如下公式计算：
+
+(0.2125\*r + 0.7154\*g + 0.0721\*b)\* opacity
+
+系数不同，是因为完全饱和情况下，红绿蓝的亮度不同。
+
 
 
 
