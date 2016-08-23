@@ -551,7 +551,7 @@ startOffset属性用来指定文本的起点，当设置为50%，并且设置tex
 <image x="0" y="0" width="480" height="270" xlink:href="./10.0.jpg" opacity="0.2"></image>
 ```
 
-![image](http://note.youdao.com/favicon.ico)  10.1
+![image](https://github.com/xswei/SVG_Essentials/blob/master/image/10.1.jpg)  
 
 在上图中裁剪区域由一个矩形、path路径和一个圆形组成，为了方便对比观察，又添加了一个透明度为0.2的背景图。
 
@@ -571,7 +571,7 @@ startOffset属性用来指定文本的起点，当设置为50%，并且设置tex
 <image x="0" y="0" width="480" height="270" xlink:href="./10.0.jpg" style="clip-path:url(#rectClip);"></image>
 <image x="0" y="0" width="480" height="270" xlink:href="./10.0.jpg" opacity="0.2"></image>
 ```
-![image](http://note.youdao.com/favicon.ico)  10.2
+![image](https://github.com/xswei/SVG_Essentials/blob/master/image/10.2.jpg)  
 
 可以注意到clipPath元素中的坐标都根据被裁剪对象的尺寸百分比设置。
 
@@ -595,7 +595,7 @@ mask之间是想要用作蒙版的任意基本形状、文本图像或路径。�
 <rect x="0" y="0" width="100" height="100" fill="none" stroke="black"></rect>
 ```
 
-![image](http://note.youdao.com/favicon.ico) 10.3
+![image](https://github.com/xswei/SVG_Essentials/blob/master/image/10.3.jpg)
 
 在上图中，mask元素中添加了一个圆，用作蒙版形状，添加了两个rect，一个应用了蒙版，一个添加了边框便于观察。
 
