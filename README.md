@@ -605,6 +605,71 @@ SVG需要确定蒙版的透明度，每个像素由4个值描述：R,G,B,透明�
 
 系数不同，是因为完全饱和情况下，红绿蓝的亮度不同。
 
+## 第十一章 滤镜
+
+### 1. 滤镜工作原理
+
+SVG阅读器处理一个图形对象时，会将对象呈现在位图输出设备上，它可以将对象的描述信息转化为一组对应的像素。在使用滤镜时，SVG阅读器不会直接将图形渲染为最终结果，而是先将像素保存到临时位图中，然后将滤镜指定的操作应用到该临时位图，其结果作为最终图形。
+
+在SVG中，使用filter元素指定一组操作(也叫基元),在渲染图形对象时，将该操作应用在最终图形上。
+
+filter标记之间就是我们想要的滤镜基元，每个基元有一个或多个输入，但是只有一个输出，输入可以是原始图形(SourceGraphic)、图形的阿尔法通道(不透明度，SourceAlpha)或者是前一个滤镜基元的输出。
+
+### 2. 创建投影效果
+
+filter元素有一些属性用来描述该滤镜的裁剪区域。通过x,y,width,height属性定义一个滤镜范围，这些属性默认情况是按照对象的边界框计算的，即filterUnits属性的默认值为objectBoundingBox,如果要按照用户单位制定边界，则需要设置该属性值为userSpaceOnUse。
+
+还可以用primitiveUnits属性为基元操作指定单位，默认值为userSpaceOnUse,如果设置为objectBoundingBox则会按照图形尺寸的百分比来表示单位。
+
+使用feGuassianBlur元素指定一个高斯投影基元。
+
+
+```
+<defs>
+	<filter id="gaussian" x="0" y="0">
+		<feGaussianBlur in="SourceGraphic" stdDeviation="2"></feGaussianBlur>
+	</filter>
+</defs>
+<g transform="translate(10,10)">
+	<rect x="10" y="10" width="100" height="100" fill="#ccc" filter="url(#gaussian)"></rect>
+</g>
+<g>
+	<rect x="10" y="10" width="100" height="100" fill="black"></rect>
+</g>
+```
+
+![image](https://github.com/xswei/SVG_Essentials/blob/master/image/11.1.jpg) 
+
+在上例中，定义了一个高斯模糊滤镜，然后通过绘制两次矩形产生矩形阴影效果，但是这要求SVG阅读器要绘制两次矩形，更好的方法时添加多个滤镜基元，让SVG阅读器一次性完成渲染。于是就需要对滤镜结果进行存储、链接以及合并。修改后如下：
+
+
+```
+<defs>
+	<filter id="gaussian" x="0" y="0">
+		<feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blur"></feGaussianBlur>
+	<feOffset in="blur" dx="10" dy="10" result="offsetBlur"></feOffset>
+		<feMerge>
+			<feMergeNode in="offsetBlur" />
+			<feMergeNode in="SourceGraphic" /> 
+		</feMerge>
+	</filter>
+</defs>
+<g>
+	<rect x="10" y="10" width="100" height="100" fill="black" filter="url(#gaussian)"></rect>
+</g>
+```
+![image](https://github.com/xswei/SVG_Essentials/blob/master/image/11.2.jpg) 
+
+result属性指定当前元素的结果稍后可以通过blur引用，这个与id不同，只能在包含该基元的filter中有效。
+
+feOffset基元接受它的输入，在这里接受的是feGaussianBlur的结果(in="blur")，偏移由dx和dy指定，输出为offsetBlur。
+
+feMerge基元包裹一个feMergeNode元素列表,每个元素都指定一个输入。这些输入按照出现的顺序叠加。在这里blur位于原始图形(SourceGraphic)的下面。
+
+### 3. 发光滤镜
+
+
+
 
 
 
