@@ -669,6 +669,163 @@ feMerge基元包裹一个feMergeNode元素列表,每个元素都指定一个输�
 ### 3. 发光滤镜
 
 
+feColorMatrix元素用来以一种通用的方式改变颜色值，可以用来创建一个发光的区域。
+
+
+```
+<defs>
+	<filter id="matrix" x="0" y="0">
+		<feColorMatrix type="matrix" values="
+			0 0 0 0   0
+			0 0 0 0.9 0
+			0 0 0 0.9 0
+			0 0 0 1   0
+		"></feColorMatrix>
+    </filter>
+</defs>
+<text x="10" y="100" font-size="40" style="filter:url(#matrix)">发光滤镜</text>
+```
+
+![image](https://github.com/xswei/SVG_Essentials/blob/master/image/11.3.jpg) 
+
+feColorMatrix是一个通用的基元，允许修改任意像素点的颜色或阿尔法值，当type="matrix"时，必须指定一个4x5的矩阵。矩阵中每行数字分别乘以输入像素的r,g,b,a的值和常量1，然后加在一起得到输出值。要设置一个变换，将所有不透明区域回执为相同颜色，可以忽略输入颜色和常量。
+
+矩阵模型：
+
+
+```
+    values="
+        0    0    0    red    0
+        0    0    0    green  0
+        0    0    0    blue   0
+        0    0    0    1      0
+    "
+```
+red,green,blue的值通常为0到1之间的十进制数，在上述例子中，red为0,green和blue为0.9会产生一个明亮的青色。
+
+上述type为matrxi，除此之外，还有其他三个值：
+
+
+feColorMatrix基元的type属性 | 说明
+---|---
+hueRotate | 色相旋转，value是一个单一的数字，描述颜色的色相值应该被旋转多少度
+saturate | 饱和度，values属性指定一个0到1之间的数字，数字越小，颜色越不饱和
+luminanceToAlpha | 用亮度决定alpha值,这一属性忽略的values属性值
+
+### 4. feImage滤镜
+
+SVG的feImage滤镜允许使用任意的JPG\PNG\SVG文件或带有id属性SVG元素作为输入源。
+
+```
+<defs>
+	<filter id="image" x="0" y="0">
+		<feImage xlink:href="10.0.jpg" result="bg" x="10" y="10" width="200" height="200" preserveAspectRatio="none"></feImage>
+	</filter>
+</defs>
+<g style="filter:url(#image)">
+	<rect x="10" y="10" width="200" height="300" stroke="black"></rect>
+</g>
+<g>
+	<rect x="10" y="10" width="200" height="300" fill="none" stroke="black"></rect>
+</g>
+```
+![image](https://github.com/xswei/SVG_Essentials/blob/master/image/11.4.jpg)
+
+feImage基元可以将一个图片作为背景，在上示例中，第一个g元素使用了滤镜，因此可以看到一个200*200的图片。第二个g中包含了一个与第一个g中相同大小的矩形，feImage中定义了图片的尺寸，因此没有填充满第一个矩形。默认情况下feImage元素上使用userSpaceOnUse设置宽度、高度以及x和y，如果要基于滤镜区域，则需要设置filter元素上的primitiveUnits属性为objectBoundingBox。
+
+### 5. 光照效果
+
+可以通过滤镜为图形添加光照效果，添加光照效果必须指定以下信息：
+
+~反射类型：漫反射(feDiffuseLighting)或镜面反射(feSpecularLighting)
+
+~想要照亮的对象
+
+~使用的灯光颜色
+
+~想要的光源类型：点光源(fePointLight),远光(FeFistantLight)或聚光灯(feSpotLight)
+
+
+```
+<defs>
+	<filter id="diff-light" color-interpolate-filter="sRGB" x="0" y="0">
+		<feDiffuseLighting in="SourceGraphic"
+			lighting-color="#ffffcc"
+			surfaceScale="1"
+			diffuseConstant="0.5"
+			result="diffuseOutput">
+			<fePointLight x="50" y="50" z="20"/>
+		</feDiffuseLighting>
+		<feComposite in1="diffuseOutput" in2="SourceGraphic" operator="in" result="diffuseOutput"></feComposite>
+		<feBlend in1="diffuseOutput" in2="SourceGraphic" mode="screen"></feBlend>
+    </filter>
+</defs>
+<circle cx="50" cy="50" r="50" style="filter:url(#diff-light)"></circle>
+<circle cx="170" cy="50" r="50" ></circle>
+```
+![image](https://github.com/xswei/SVG_Essentials/blob/master/image/11.5.jpg)
+
+上述示例中使用feDiffuseLighting定义了一个漫反射元素，设置了光照颜色、计算阿尔法乘积因子(surfaceScale)、RGB值得乘积因子(diffuseConstant)。
+
+fePointLight元素被包裹在feDiffuseLighting中，定义了光源的相关信息(位置)。
+
+feComposite元素接受两个源，并指定两个输入的重叠方式。
+
+feBlend元素也需要两个输入源，还需要一个mode属性指定如何混合输入源。在这里会尝试让图形变亮。
+
+
+```
+<defs>
+	<filter id="spec-light" color-interpolate-filter="sRGB" x="0" y="0">
+		<feSpecularLighting in="SourceGraphic"
+			lighting-color="#ffffcc"
+			surfaceScale="1"
+			specularConstant="1"
+			specularExponent="4"
+			result="specOutput"
+			>
+				<feDistantLight elevation="25" azimuth="0"/>
+		</feSpecularLighting>
+		<feComposite in1="specOutput" in2="SourceGraphic" operator="in" result="specOutput"></feComposite>
+		<feComposite in1="specOutput" in2="SourceGraphic" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"></feComposite>
+	</filter>
+</defs>
+<circle cx="50" cy="50" r="50" style="fill:#060;filter:url(#spec-light)"></circle>
+<circle cx="170" cy="50" r="50" style="fill:#060"></circle>
+```
+
+![image](https://github.com/xswei/SVG_Essentials/blob/master/image/11.6.jpg)
+
+上述例子使用了镜面反射feSpecularLight元素，在feSpecularLight元素中定义了光源颜色、surfaceScale、specularConstant等属性。与漫反射的光源类型也不同。
+
+### 6. 访问背景
+
+除了SourceGraphic和SourceAlpha作为滤镜输入之外，还可以访问以及渲染到画布上的图片的某一部分，这部分内容称为backgroundImage和backgroundAlpha。为了访问这些输入信息，滤镜对象必须位于enable-background属性值为new的容器元素之内。
+
+
+```
+<defs>
+	<filter id="blur-background" color-interpolate-filter="sRGB" x="0" y="0">
+		<feGaussianBlur in="BackgroundImage" stdDeviation="10" result="blur" />
+		<feComposite in1="blur" in2="SourceGraphic" operator="in"/>
+		<feOffset dx="4" dy="4" result="offsetBlur"></feOffset>
+    </filter>
+</defs>
+<g enable-background="new">
+	<rect x="20" y="20" width="100" height="100" style="fill:lightblue;stroke:black;stroke-width:10"></rect>
+	<circle cx="100" cy="100" r="30" style="fill:#fff;filter:url(#blur-background)"></circle>
+</g>
+```
+
+![image](https://github.com/xswei/SVG_Essentials/blob/master/image/11.7.jpg) 
+
+在g元素设置enable-background属性,则它所有的子元素都可以利用背景图像和阿尔法信息。
+
+### 8. 滤镜总结
+
+上述所有滤镜之外，还有好多...写到崩溃(无奈脸)
+
+但是这里只写出了几种常见的滤镜。更多的滤镜相关可以查询相关资料。
 
 
 
