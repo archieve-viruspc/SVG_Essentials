@@ -828,6 +828,259 @@ feBlend元素也需要两个输入源，还需要一个mode属性指定如何混
 但是这里只写出了几种常见的滤镜。更多的滤镜相关可以查询相关资料。
 
 
+## 第十二章 SVG动画
+
+### 1. 动画基础
+
+SVG动画特性基于"同步多媒体集成语言"(SMIL)规范。在这个动画系统中，可以指定想要进行的动画的属性(颜色、动作或者变形等)的起始值和初始值，以及动画开始的时间和持续时间。
+
+
+```
+<rect x="10" y="10" width="200" height="200" stroke="black" fill="none">
+	<animate 
+		attributeName="width" 
+		attributeType="XML" 
+		from="200" to="20" 
+		begin="0s" dur="5s" 
+		fill="freeze">
+	</animate>
+</rect>
+```
+上述示例中，rect的宽度从200变化到20，历时5秒。rect不再是一个空元素，包含了动画元素animate。 如果需要在一个元素上指定多个属性的过渡则需要同时使用多个animate元素，分别指定过渡的这些元素的过渡属性。
+
+animate元素指定了以下信息：
+
+属性 | 说明
+---|---
+attributeName | 动画中改变的值
+attributeType | width是一个XML属性，另一个常用的值是CSS，如果忽略这个值，则默认是auto，会先搜索CSS属性，再搜索XML属性
+from to | 起始值和结束值
+values | from和to只能指定两个值，使用values时可以以列表形式同时指定多个中间值，变换会依次使用列表内的值。如果要交替动画，则指定为start,end,start三个即可实现
+dur | 持续时间
+fill | 结束时该怎么做，freeze表示冻结，如果不指定会使用默认值：remove，表示动画完成后会返回原始值。
+repeatCount | 动画重复次数
+repeatDur | 重复应该进行多长时间
+calcMode | 过渡类型，可以为线性(linear)，直接跳转(不支持过渡时直接跳转到结束值discrete)，spline，paced等。
+
+### 2. 动画时间与同步动画
+
+SVG动画用到的动画时钟在SVG加载完成时开始启动计时，当用户离开页面时停止计时。因此可以以下列任意一种方式指定动画开始和持续时间为一个数值。
+
+
+时间 | 说明
+---|---
+时分秒的完整时间值 | 例如1:20:23
+分秒形式 | 例如02:15
+以h、min、s或者ms结尾的时间值 | 例如begin="3.5s" dur="1min" 值和单位之间不能有空格
+
+可以将一个动画的开始时间设置另一个动画的结束或开始，而不是固定的时间值。
+
+
+```
+<rect x="10" y="10" width="200" height="25" stroke="black" fill="none">
+	<animate 
+		id="c1"
+		attributeName="width" 
+		attributeType="XML" 
+		from="200" to="20" 
+		begin="0s" dur="5s" 
+		fill="freeze">
+	</animate>
+</rect>
+<circle cx="120" cy="60" r="10" stroke="black" fill="none">
+	<animate
+		attributeName="r"
+		attributeType="XML"
+		begin="c1.end"
+		from="10" to="20"
+		dur="4s"
+	></animate>
+</circle>
+```
+
+上述示例中包含了两个过渡，一个是矩形，一个是圆，矩形中的animate元素指定了id="c1"，圆中的animate元素的begin属性为c1.end，也就是圆的过渡要等到矩形的过渡结束之后才开始。此时两个过渡是无延迟的，也可以在两个过渡之间加一个延迟时间：
+
+```
+<rect x="10" y="10" width="200" height="25" stroke="black" fill="none">
+	<animate 
+		id="c1"
+		attributeName="width" 
+		attributeType="XML" 
+		from="200" to="20" 
+		begin="0s" dur="5s" 
+		fill="freeze">
+	</animate>
+</rect>
+<circle cx="120" cy="60" r="10" stroke="black" fill="none">
+	<animate
+		attributeName="r"
+		attributeType="XML"
+		begin="c1.end+5s"
+		from="10" to="20"
+		dur="4s"
+	></animate>
+</circle>
+```
+
+圆的过渡时间改为c1.end+5s，也就是矩形的过渡结束5秒之后才开始圆的过渡，同理，也可以设置为c1.begin+xs，矩形开始x秒之后开始圆的过渡。
+
+### 3. 多边形和path动画
+
+多边形和path的值为数字列表，也可以对这些属性进行过渡，但是要保证数字列表中数字的数字数量没有变即可。列表中的每个点都是单独变换的。
+
+
+```
+<polygon points="30 30 70 30 90 70 10 70" style="fill:#fcc;stroke:black">
+	<animate
+		attributeName="points"
+		attributeType="XML"
+		to="50 30 70 50 50 90 30 50"
+		begin="0s" dur="5s" fill="freeze"
+	></animate>
+</polygon>
+<path d="M15 50 Q40 15,50 50,65 32,100 40" style="fill:#fcc;stroke:black" transform="translate(0,50)">
+	<animate
+		attributeName="d"
+		attributeType="XML"
+		to="M50 15Q15 40,50 50,32 65,40 100"
+		begin="0s" dur="5s" fill="freeze"
+	></animate>
+</path>
+```
+
+### 4. 对坐标变换进行过渡
+
+animate元素不适合对平移、旋转、缩放进行过渡，因为这些坐标变换被包裹在transform属性内。animateTransform元素可以解决这个问题。
+
+
+```
+<g transform="translate(100,60)">
+	<rect x="-10" y="-10" width="20" height="20" style="fill:#ff9;stroke:black">
+		<animateTransform
+			attributeType="XML"
+			attributeName="transform" type="scale"
+			from="1" to="4 2"
+			dur ="3s"
+			begin = "0s" fill="freeze"
+		></animateTransform>
+	</rect>
+</g>
+```
+上述示例中，会对矩形的transform属性进行过渡，通过type指定是对scale进行过渡。可以对矩形进行缩放。缩放的中心为100,60(因为矩形被包裹在g中，g被平移了100,60)
+
+如果同时指定了多个坐标变换，比如同时对平移和缩放，则需要指定additive属性。additive属性默认为replace，即会替换动画对象的指定变换。不适合一系列变换，因为后面的会将之前的过渡覆盖掉，因此要设置additive属性值为sum。
+
+
+```
+<rect x="-10" y="-10" width="20" height="20" style="fill:#ff9;stroke:black">
+	<animateTransform
+		attributeType="XML"
+		attributeName="transform" type="scale"
+		from="1" to="4 2"
+		dur ="3s"
+		begin = "0s" fill="freeze"
+		additive = "sum"
+	></animateTransform>
+	<animateTransform
+		attributeType="XML"
+		attributeName="transform" type="rotate"
+		from="0" to="90"
+		dur ="3s"
+		begin = "3s" fill="freeze"
+		additive = "sum"
+	></animateTransform>
+</rect>
+```
+指定additive="sum"后，先对矩形进行缩放，然后在缩放的基础上进行旋转。
+
+### 5. 沿着path运动
+
+我们已经可以在animateTransform元素中通过translate对过渡对象进行平移变换，但是如果需要让过渡对象沿着更复杂的路径运动，则需要使用animateMotion元素。
+
+
+```
+<rect x="-10" y="-10" width="20" height="20" style="fill:#ff9;stroke:black">
+	<animateMotion
+		path="M50,135C100,25 150,225 200,125"
+		dur="6s" fill="freeze"
+	></animateMotion>
+</rect>
+```
+
+上述示例中，可以使矩形沿着path="M50,135C100,25 150,225 200,125"做轨迹运动，但是运动过程中，矩形不会自动根据轨迹方向旋转，因此需要设置animateMotion元素的rotate属性值为auto。
+
+如果已经有了path轨迹，不想再在animateMotion元素中定义一次path，则可以使用mPath元素。mPath元素定义在animateMotion元素内部，通过xlink:href引用指定的路径即可。
+
+
+```
+<path id="movePath" d="M50,135C100,25 150,225 200,125" fill="none" stroke="black"></path>
+<rect x="-10" y="-10" width="20" height="20" style="fill:#ff9;stroke:black">
+		<animateMotion dur="6s" fill="freeze" rotate="auto">
+			<mPath xlink:href="#movePath"></mPath>
+		</animateMotion>
+</rect>
+```
+
+结果同上。
+
+### 6. CSS处理SVG动画
+
+现代浏览器都支持CSS梳理SVG动画，使用CSS处理SVG动画需要两个步骤：一是选中要运动的元素，然后设置将动画属性作为一个整体进行设置。二是告诉浏览器改变选中元素的哪个属性以及在动画的什么阶段。这些都定义在@keyframes说明符中。
+
+
+动画属性 | 说明
+---|---
+animation-name | @keyframes说明符的名称
+animation-duration | 动画持续时长
+animation-timing-function | 如何计算中间值，也就是动画类型：线性，缓入缓出等等
+animation-iteration-count | 重复次数
+animation-direction | 动画是反向还是正向或者交替执行
+animation-play-state | 可以设置为running或paused
+animation-delya | 延迟时间
+animation-fill-mode | 动画不再执行时使用什么属性，可以为forwards(结束时属性)、backwards(开始时属性值)、both
+
+
+```
+<defs>
+	<g id="starDef">
+		<circle cx="50" cy="50" r="10"></circle>
+	</g>
+</defs>
+<use id="star" class="starStyle" xlink:href="#starDef" fill="#008000"></use>
+```
+对应的CSS代码为：
+
+
+```
+.starStyle{
+	animation-name:starAnim;
+	animation-duration: 2s;
+	animation-iteration-count: 4;
+	animation-direction: alternate;
+	animation-timing-function: ease;
+	animation-play-state: running; 
+}
+@keyframes starAnim{
+	0%{
+		fill:red;
+		transform: translate(100px,100px);
+	}
+	50%{
+		fill:green;
+		transform: translate(120px,100px);
+	}
+	100%{
+		fill:blue;
+		transform: translate(100px,120px);
+	}
+}
+```
+
+在@keyframes中设置关键帧属性。
+
+
+
+
 
 
 
