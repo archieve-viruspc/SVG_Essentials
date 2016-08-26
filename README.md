@@ -1,7 +1,7 @@
 SVG精髓
 
 本书所有完整示例代码 []()
-[原书示例代码](https://github.com/oreillymedia/svg-essentials-examples){:target="_blank"}
+[原书示例代码](https://github.com/oreillymedia/svg-essentials-examples)
 
 ## 第一章 入门指南
 ### 1. 图形系统
