@@ -13,6 +13,7 @@ SVG精髓
 
 
 [SVG DOM 接口方法](https://github.com/xswei/SVG_DOM)
+[SVG & XML](https://github.com/xswei/SVGandXML)
 
 ## 第一章 入门指南
 ### 1. 图形系统
