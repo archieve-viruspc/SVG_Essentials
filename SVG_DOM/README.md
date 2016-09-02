@@ -2,7 +2,7 @@
 
 [SVG_Essentials](https://github.com/xswei/SVG_Essentials)
 
-[SVG & XML](https://github.com/xswei/SVGandXML)
+[SVG & XML](https://github.com/xswei/SVG_Essentials/tree/master/SVGandXML)
   
 SVG中的一些DOM接口
 
