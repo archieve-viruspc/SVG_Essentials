@@ -12,8 +12,8 @@ SVG精髓
 [原书示例代码](https://github.com/oreillymedia/svg-essentials-examples)
 
 
-[SVG DOM 接口方法](https://github.com/xswei/SVG_DOM)
-[SVG & XML](https://github.com/xswei/SVGandXML)
+[SVG DOM 接口方法](https://github.com/xswei/SVG_Essentials/tree/master/SVG_DOM)
+[SVG & XML](https://github.com/xswei/SVG_Essentials/tree/master/SVGandXML)
 
 ## 第一章 入门指南
 ### 1. 图形系统
