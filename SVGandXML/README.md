@@ -2,7 +2,7 @@
 
 [SVG精髓](https://github.com/xswei/SVG_Essentials)
 
-[SVG DOM 接口](https://github.com/xswei/SVG_DOM)
+[SVG DOM 接口](https://github.com/xswei/SVG_Essentials/tree/master/SVG_DOM)
 
 ### 1. 什么是XML
 
