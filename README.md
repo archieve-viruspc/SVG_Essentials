@@ -486,7 +486,7 @@ text元素以指定的x和y值作为元素内容第一个字符的基线位置�
 属性 | 说明
 ---|---
 font-family | 以空格分割的一系列字体名称或通用字体名称
-font-size | 如果有多行文本，则font-size为良心的两条基线的距离
+font-size | 如果有多行文本，则font-size为平行的两条基线的距离
 font-weight | 两个值：bold(粗体)和nromal(默认) 
 font-style | 常用的两个值:italic(斜体)和normal
 text-decoration | 可能的值:none,underline(下划线),overline(上划线),line-through(删除线)
