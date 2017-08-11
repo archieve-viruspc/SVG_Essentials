@@ -17,6 +17,8 @@ SVG精髓
 
 [SVG文本换行](http://www.zhangxinxu.com/wordpress/2017/08/svg-foreignobject/)
 
+[SVG-foreignObjectElement](https://developer.mozilla.org/zh-CN/docs/Web/API/SVGForeignObjectElement)
+
 ## 第一章 入门指南
 ### 1. 图形系统
 计算机中描述图形信息的两大图形系统：栅格图形和矢量图形。栅格图形中图形被表示为图片元素或者像素的长方形数组。矢量图形中图形被描述为一系列几何形状，通过矢量图形阅读器在指定的坐标集上绘制形状。
