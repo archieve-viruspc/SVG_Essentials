@@ -11,7 +11,7 @@
 - [switch]()
 ### SVGForeignObjectElement
 
-SVGForeignObjectElement实现了访问`[<foreignObject>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/foreignObject)`元素属性的接口以及操作它们的方法。
+SVGForeignObjectElement实现了访问`[foreignObject](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/foreignObject)`元素属性的接口以及操作它们的方法。
 
 ### foreignObject
 
