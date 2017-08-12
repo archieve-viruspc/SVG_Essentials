@@ -19,7 +19,9 @@ foreignObject允许在SVG中嵌入外部XML应用，这些外部应用可能是�
 
 foreignObject 内的元素假设与SVG具有不同的命名空间。如果不指定命名空间除非浏览器能识别，否则则不会被绘制，多层嵌套时也是如此。比如在一个SVG中使用foreignObject中嵌入一个非SVG文档，而这个非SVG文档中又嵌入了另一个SVG文档这种情况。
 
-一般在使用foreignObject时，结合[switch](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/switch)元素和requiredExtensions(https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/requiredExtensions)属性一起使用，因为foreignObject这个元素可能会不被支持。使用switch是为了在foreignObject元素不支持时提供一个备选方案。
+一般在使用foreignObject时，结合[switch](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/switch)元素和[requiredExtensions](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/requiredExtensions)属性一起使用，因为foreignObject这个元素可能会不被支持。使用switch是为了在foreignObject元素不支持时提供一个备选方案。
+
+下面是例子，忽略了requiredExtensions属性，因为..查不到它的资料(捂脸)。
 
 ```html
 <svg width='600' height='400' xmlns='http://www.w3c.org/2000/svg' style='border:2px steelblue solid'>
@@ -38,3 +40,5 @@ foreignObject 内的元素假设与SVG具有不同的命名空间。如果不指
 ```
 
 ![image](https://github.com/xswei/SVG_Essentials/blob/master/image/foreignObject.jpg)
+
+上述例子中使用div元素实现了换行，当然也可以使用其他的任何元素，在SVG中使用普通的HTML元素惊不惊喜，刺不刺激。

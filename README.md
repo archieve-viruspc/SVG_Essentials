@@ -15,7 +15,7 @@ SVG精髓
 
 [SVG & XML](https://github.com/xswei/SVG_Essentials/tree/master/SVGandXML)
 
-[SVG文本换行](http://www.zhangxinxu.com/wordpress/2017/08/svg-foreignobject/)
+[SVG高级](https://github.com/xswei/SVG_Essentials/tree/master/advanced)
 
 [SVG-foreignObjectElement](https://developer.mozilla.org/zh-CN/docs/Web/API/SVGForeignObjectElement)
 
