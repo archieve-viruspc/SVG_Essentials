@@ -39,6 +39,7 @@
 
 效果如下：
 
+<div>
 <svg width='600' height='400' xmlns='http://www.w3c.org/2000/svg' style='border:2px steelblue solid'>
 	<switch>
 		<foreignObject x='100' y='100' width='100' height='100'>
@@ -52,3 +53,4 @@
 		</text>
 	</switch>
 </svg>
+</div>
